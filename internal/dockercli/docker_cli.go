@@ -14,6 +14,16 @@ type Container struct {
 	Status string `json:"status"`
 }
 
+var allowedContainerNames = map[string]struct{}{
+	"ticket-mate-back-blue":  {},
+	"ticket-mate-back-green": {},
+}
+
+func isAllowedContainerName(name string) bool {
+	_, exists := allowedContainerNames[name]
+	return exists
+}
+
 func GetRunningContainers() ([]Container, error) {
 	cmd := exec.Command(
 		"docker",
@@ -41,6 +51,12 @@ func GetRunningContainers() ([]Container, error) {
 		if len(parts) != 4 {
 			continue
 		}
+
+		name := strings.TrimSpace(parts[1])
+		if !isAllowedContainerName(name) {
+			continue
+		}
+
 		container := Container{
 			ID:     strings.TrimSpace(parts[0]),
 			Name:   strings.TrimSpace(parts[1]),
@@ -63,7 +79,7 @@ func FetchContainerLogs(containerID string, tailLines *int) (string, error) {
 
 	if tailLines != nil {
 		if *tailLines <= 0 {
-			return "", fmt.Errorf("tailLines 는 0 이상의 숫자여야합니다")
+			return "", fmt.Errorf("tailLines 는 1 이상의 숫자여야합니다")
 		}
 		args = append(args, "--tail", fmt.Sprintf("%d", *tailLines))
 	}
