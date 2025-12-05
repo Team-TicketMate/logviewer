@@ -70,19 +70,19 @@ jobs:
             CONTAINER_NAME="${PROJECT}"
             
             echo "Docker 이미지 pull: ${IMAGE}"
-            echo "${PW}" | sudo docker pull "${IMAGE}"
+            echo "${PW}" | sudo -S docker pull "${IMAGE}"
             
             # 이미 같은 이름의 컨테이너가 있으면 정지 후 삭제
-            if [ "$(sudo docker ps -aq -f name=${CONTAINER_NAME})" ]; then
+            if sudo docker ps -a --format '{{.Names}}' | grep -Eq "^${CONTAINER_NAME}\$"; then
               echo "이미 작동중인 컨테이너 정지: ${CONTAINER_NAME}"
-              echo "${PW}" | sudo docker stop "${CONTAINER_NAME}" || true
+              echo "${PW}" | sudo -S docker stop "${CONTAINER_NAME}" || true
               echo "작동중인 컨테이너 삭제: ${CONTAINER_NAME}"
-              echo "${PW}" | sudo docker rm "${CONTAINER_NAME}" || true
+              echo "${PW}" | sudo -S docker rm "${CONTAINER_NAME}" || true
             fi
             
             echo "새로운 컨테이너 시작: ${CONTAINER_NAME}"
             
-            echo "${PW}" | sudo docker run -d \
+            echo "${PW}" | sudo -S docker run -d \
               --name "${CONTAINER_NAME}" \
               -p 8888:8080 \
               --restart unless-stopped \
