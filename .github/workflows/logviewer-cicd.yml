@@ -21,7 +21,7 @@ jobs:
       - name: Go 설정
         uses: actions/setup-go@v5
         with:
-          go-version: "1.22"
+          go-version: "1.25.5"
 
       - name: GitHub Container Registry 로그인
         uses: docker/login-action@v3

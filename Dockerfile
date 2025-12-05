@@ -1,11 +1,11 @@
 # Go 빌드
-FROM golang:1.22-alpine AS builder
+FROM golang:1.25.5-alpine AS builder
 
 # 작업 디렉토리 설정
 WORKDIR /app
 
 # Go 모듈 파일 복사 (캐시)
-COPY go.mod go.sum ./
+COPY go.mod ./
 RUN go mod download
 
 # 나머지 소스 복사
