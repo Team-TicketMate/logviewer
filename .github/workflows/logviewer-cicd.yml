@@ -39,7 +39,7 @@ jobs:
           context: .
           file: ./Dockerfile
           push: true
-          tags: ghcr.io/${{ github.repository }}:latest
+          tags: ghcr.io/ticketmate-logviewer:latest
           platforms: linux/amd64
 
   deploy:
@@ -59,7 +59,7 @@ jobs:
           script: |
             set -e
             
-            IMAGE="ghcr.io/${{ github.repository }}:latest
+            IMAGE="ghcr.io/ticketmate-logviewer:latest
             CONTAINER_NAME="logviewer"
             
             echo "Docker 이미지 pull: ${IMAGE}"
