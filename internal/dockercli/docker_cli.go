@@ -2,7 +2,9 @@ package dockercli
 
 import (
 	"bytes"
+	"context"
 	"fmt"
+	"io"
 	"os/exec"
 	"strings"
 )
@@ -100,4 +102,41 @@ func FetchContainerLogs(containerID string, tailLines *int) (string, error) {
 	}
 
 	return output, nil
+}
+
+func StreamContainerLogs(ctx context.Context, containerID string, tailLines *int, output io.Writer) error {
+	trimmedID := strings.TrimSpace(containerID)
+	if trimmedID == "" {
+		return fmt.Errorf("컨테이너 ID가 비어있습니다")
+	}
+
+	args := []string{"logs"}
+
+	if tailLines != nil {
+		if *tailLines <= 0 {
+			return fmt.Errorf("tailLines 는 1 이상의 숫자여야합니다")
+		}
+		args = append(args, "--tail", fmt.Sprintf("%d", *tailLines))
+	}
+
+	// docker logs --tail N --follow <id>
+	args = append(args, "--follow", trimmedID)
+
+	// CommandContext를 사용해서 request 컨텍스트가 취소되면 docker 프로세스도 종료
+	cmd := exec.CommandContext(ctx, "docker", args...)
+
+	// stdout, stderr 모두 HTTP 응답으로 보냄
+	cmd.Stdout = output
+	cmd.Stderr = output
+
+	if err := cmd.Start(); err != nil {
+		return fmt.Errorf("'docker logs --follow' 시작에 실패했습니다: %w", err)
+	}
+
+	// Wait은 컨텍스트 취소 또는 프로세스 종료까지 블로킹
+	if err := cmd.Wait(); err != nil {
+		return fmt.Errorf("'docker logs --follow' 실행 중 오류가 발생했습니다: %w", err)
+	}
+
+	return nil
 }
