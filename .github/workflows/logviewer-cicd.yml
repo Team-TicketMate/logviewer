@@ -60,6 +60,7 @@ jobs:
 
           script: |
             set -e
+            export PATH=$PATH:/usr/local/bin
             
             echo "환경변수 설정"
             PW="${{ secrets.SERVER_PASSWORD }}"
