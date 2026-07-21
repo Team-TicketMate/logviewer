@@ -19,6 +19,7 @@ type Container struct {
 var allowedContainerNames = map[string]struct{}{
 	"ticket-mate-back-blue":  {},
 	"ticket-mate-back-green": {},
+	"elum-back":              {},
 }
 
 func isAllowedContainerName(name string) bool {
