@@ -20,6 +20,8 @@ var allowedContainerNames = map[string]struct{}{
 	"ticket-mate-back-blue":  {},
 	"ticket-mate-back-green": {},
 	"elum-back":              {},
+	"elum-back-blue":         {},
+	"elum-back-green":        {},
 	"eodaego-ai":             {},
 	"eodaego-server":         {},
 }
